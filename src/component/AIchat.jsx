@@ -165,7 +165,7 @@ const Aichat = () => {
             </button>
             <div className='flex w-full items-center justify-between px-2'>
               <h1 className="text-lg flex items-center gap-2 text-blue-600 dark:text-blue-400 font-bold">
-                <FaRobot className="text-blue-500" /> PAK AI
+                <FaRobot className="text-blue-500" /> Code-Minde
               </h1>
               <div className="flex items-center gap-2">
                
@@ -258,7 +258,7 @@ const Aichat = () => {
           {!isMobile && (
             <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between gap-3 bg-white dark:bg-gray-800 shadow-sm">
               <h1 className="text-xl flex items-center gap-3 font-bold text-blue-600 dark:text-blue-400">
-                <FaRobot className="text-blue-500" /> PAK AI Assistant
+                <FaRobot className="text-blue-500" /> Code-Mind
               </h1>
               <div className="flex items-center gap-4">
                 <button 
