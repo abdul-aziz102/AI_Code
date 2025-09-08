@@ -110,40 +110,7 @@ const Chat = ({
   return (
     <div className="flex flex-col flex-1 overflow-hidden bg-white dark:bg-gray-900">
       {/* Header with conversation actions */}
-      <div className="flex items-center justify-between p-4 border-b dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
-        <div className="flex items-center space-x-2">
-          {isMobile && (
-            <button
-              onClick={toggleSidebar}
-              className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-              aria-label="Toggle sidebar"
-            >
-              <Menu size={20} />
-            </button>
-          )}
-        </div>
-        
-        <div className="flex space-x-2">
-          {messages.length > 0 && (
-            <>
-              <button
-                onClick={exportConversation}
-                className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-                title="Export conversation"
-              >
-                <Download size={18} />
-              </button>
-              <button
-                onClick={clearConversation}
-                className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-                title="Clear conversation"
-              >
-                <Trash2 size={18} />
-              </button>
-            </>
-          )}
-        </div>
-      </div>
+     
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">

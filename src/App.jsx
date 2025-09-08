@@ -7,7 +7,7 @@ import Navbar from './component/Navbar';
 
 const App = () => {
   return (
-    <div className='min-h-screen bg-gray-100 w-full'>
+    <div className='  w-full'>
     <BrowserRouter>
       <Navbar />
       <Routes>
