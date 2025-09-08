@@ -7,6 +7,7 @@ import Navbar from './component/Navbar';
 
 const App = () => {
   return (
+    <div className='min-h-screen bg-gray-100 w-full'>
     <BrowserRouter>
       <Navbar />
       <Routes>
@@ -15,6 +16,7 @@ const App = () => {
         <Route path="/login" element={<Login />} />
       </Routes>
     </BrowserRouter>
+    </div>
   );
 };
 
