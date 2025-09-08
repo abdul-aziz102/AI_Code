@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef, useMemo } from "react";
+// Aichat.jsx
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { AnimatePresence } from "framer-motion";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
@@ -20,22 +21,16 @@ const Aichat = () => {
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
 
-  // ✅ API Key from .env
-  const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
-
   // ✅ Start new chat
   const startNewChat = () => {
-    if (
-      messages.length > 0 &&
-      (!activeHistory || !history.some((h) => h.id === activeHistory))
-    ) {
+    if (messages.length > 0 && (!activeHistory || !history.some(h => h.id === activeHistory))) {
       const newHistoryItem = {
         id: Date.now(),
         title: messages[0]?.text?.substring(0, 30) || "New Chat",
         messages: [...messages],
-        timestamp: new Date().toLocaleString(),
+        timestamp: new Date().toLocaleString()
       };
-      setHistory((prev) => [newHistoryItem, ...prev]);
+      setHistory(prev => [newHistoryItem, ...prev]);
     }
     setMessages([]);
     setActiveHistory(null);
@@ -52,7 +47,7 @@ const Aichat = () => {
   // ✅ Delete old chat
   const deleteChatFromHistory = (id, e) => {
     e.stopPropagation();
-    setHistory((prev) => prev.filter((item) => item.id !== id));
+    setHistory(prev => prev.filter(item => item.id !== id));
     if (activeHistory === id) startNewChat();
   };
 
@@ -78,66 +73,55 @@ const Aichat = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // ✅ AI response formatter
-  const renderResponse = useMemo(
-    () => (text) => {
-      const codeBlockRegex = /```(\w+)?\n([\s\S]*?)```/g;
-      let lastIndex = 0;
-      const elements = [];
+  // ✅ AI response ko format karna with SyntaxHighlighter
+  const renderResponse = (text) => {
+    const codeBlockRegex = /```(\w+)?\n([\s\S]*?)```/g;
+    let lastIndex = 0;
+    const elements = [];
 
-      let match;
-      while ((match = codeBlockRegex.exec(text)) !== null) {
-        const before = text.slice(lastIndex, match.index);
-        if (before.trim()) {
-          elements.push(
-            <p key={lastIndex} className="whitespace-pre-wrap">
-              {before}
-            </p>
-          );
-        }
-
-        const language = match[1] || "javascript";
-        const code = match[2];
-
+    let match;
+    while ((match = codeBlockRegex.exec(text)) !== null) {
+      const before = text.slice(lastIndex, match.index);
+      if (before.trim()) {
         elements.push(
-          <div
-            key={match.index}
-            className="my-3 rounded-lg overflow-hidden shadow-md relative"
-          >
-            {/* ✅ Copy Button */}
-            <button
-              onClick={() => navigator.clipboard.writeText(code)}
-              className="absolute top-2 right-2 px-2 py-1 text-xs rounded bg-gray-700 text-white hover:bg-gray-600"
-            >
-              Copy
-            </button>
-            <SyntaxHighlighter
-              language={language}
-              style={oneDark}
-              showLineNumbers
-              wrapLongLines
-            >
-              {code}
-            </SyntaxHighlighter>
-          </div>
-        );
-
-        lastIndex = codeBlockRegex.lastIndex;
-      }
-
-      const after = text.slice(lastIndex);
-      if (after.trim()) {
-        elements.push(
-          <p key="after" className="whitespace-pre-wrap">
-            {after}
+          <p key={lastIndex} className="whitespace-pre-wrap">
+            {before}
           </p>
         );
       }
 
-      return elements;
-    },
-    []
-  );
+      const language = match[1] || "javascript";
+      const code = match[2];
+
+      elements.push(
+        <div key={match.index} className="my-3 rounded-lg overflow-hidden shadow-md relative">
+          {/* ✅ Copy Button */}
+          <button
+            onClick={() => navigator.clipboard.writeText(code)}
+            className="absolute top-2 right-2 px-2 py-1 text-xs rounded bg-gray-700 text-white hover:bg-gray-600"
+          >
+            Copy
+          </button>
+          <SyntaxHighlighter language={language} style={oneDark} showLineNumbers wrapLongLines>
+            {code}
+          </SyntaxHighlighter>
+        </div>
+      );
+
+      lastIndex = codeBlockRegex.lastIndex;
+    }
+
+    const after = text.slice(lastIndex);
+    if (after.trim()) {
+      elements.push(
+        <p key="after" className="whitespace-pre-wrap">
+          {after}
+        </p>
+      );
+    }
+
+    return elements;
+  };
 
   // ✅ Generate AI response
   const generateAnswer = async () => {
@@ -153,12 +137,12 @@ const Aichat = () => {
 
     try {
       const response = await axios.post(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`,
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyBKqC3-JdSNxSVwwHuZK7HiVov-7oMTDx8",
         {
           contents: tempMessages.map((msg) => ({
             role: msg.sender === "user" ? "user" : "model",
-            parts: [{ text: msg.text }],
-          })),
+            parts: [{ text: msg.text }]
+          }))
         }
       );
 
@@ -166,38 +150,24 @@ const Aichat = () => {
         response?.data?.candidates?.[0]?.content?.parts?.[0]?.text ||
         "⚠️ Sorry, I could not understand that.";
 
-      const aiMessage = {
-        text: aiText,
-        sender: "ai",
-        render: renderResponse(aiText),
-      };
+      const aiMessage = { text: aiText, sender: "ai", render: renderResponse(aiText) };
       const finalMessages = [...tempMessages, aiMessage];
 
       setMessages(finalMessages);
 
-      // ✅ Only save history if it's a new chat
-      if (!activeHistory) {
-        const newHistoryItem = {
-          id: Date.now(),
-          title:
-            currentQuestion.substring(0, 30) +
-            (currentQuestion.length > 30 ? "..." : ""),
-          messages: finalMessages,
-          timestamp: new Date().toLocaleString(),
-        };
-        setHistory((prev) => [newHistoryItem, ...prev]);
-        setActiveHistory(newHistoryItem.id);
-      }
+      const newHistoryItem = {
+        id: Date.now(),
+        title: currentQuestion.substring(0, 30) + (currentQuestion.length > 30 ? "..." : ""),
+        messages: finalMessages,
+        timestamp: new Date().toLocaleString()
+      };
+      setHistory(prev => [newHistoryItem, ...prev]);
+      setActiveHistory(newHistoryItem.id);
     } catch (err) {
       console.error("Error:", err.response?.data || err.message);
-      setMessages((prev) => [
+      setMessages(prev => [
         ...prev,
-        {
-          text: `❌ Error: ${
-            err.response?.data?.error?.message || err.message
-          }`,
-          sender: "ai",
-        },
+        { text: "❌ Failed to get answer. Please try again.", sender: "ai" }
       ]);
     } finally {
       setLoading(false);
@@ -207,15 +177,8 @@ const Aichat = () => {
   };
 
   return (
-    <div
-      className={`flex flex-col h-[100dvh] w-full ${darkMode ? "dark" : ""}`}
-    >
-      <Navbar
-        isSidebarOpen={isSidebarOpen}
-        toggleSidebar={toggleSidebar}
-        darkMode={darkMode}
-        toggleDarkMode={toggleDarkMode}
-      />
+    <div className={`flex flex-col h-[100dvh] w-full ${darkMode ? "dark" : ""}`}>
+      <Navbar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
 
       <div className="flex h-full bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 overflow-hidden relative">
         <AnimatePresence>
@@ -234,9 +197,7 @@ const Aichat = () => {
         </AnimatePresence>
 
         <div
-          className={`flex-1 flex flex-col ${
-            isMobile ? "pt-16" : ""
-          } transition-all duration-300 ${
+          className={`flex-1 flex flex-col ${isMobile ? "pt-16" : ""} transition-all duration-300 ${
             isSidebarOpen && !isMobile ? "ml-64" : ""
           }`}
         >
