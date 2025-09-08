@@ -3,12 +3,13 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "scripts": {
+ "scripts": {
   "dev": "vite",
-  "build": "npx vite build",
+  "build": "node --no-warnings ./node_modules/vite/bin/vite.js build",
   "lint": "eslint .",
   "preview": "vite preview"
 },
+
 
   "dependencies": {
     "@tailwindcss/vite": "^4.1.11",
