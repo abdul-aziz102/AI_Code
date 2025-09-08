@@ -1,4 +1,3 @@
-// Aichat.jsx
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import axios from "axios";
 import { AnimatePresence } from "framer-motion";
@@ -26,14 +25,17 @@ const Aichat = () => {
 
   // ✅ Start new chat
   const startNewChat = () => {
-    if (messages.length > 0 && (!activeHistory || !history.some(h => h.id === activeHistory))) {
+    if (
+      messages.length > 0 &&
+      (!activeHistory || !history.some((h) => h.id === activeHistory))
+    ) {
       const newHistoryItem = {
         id: Date.now(),
         title: messages[0]?.text?.substring(0, 30) || "New Chat",
         messages: [...messages],
-        timestamp: new Date().toLocaleString()
+        timestamp: new Date().toLocaleString(),
       };
-      setHistory(prev => [newHistoryItem, ...prev]);
+      setHistory((prev) => [newHistoryItem, ...prev]);
     }
     setMessages([]);
     setActiveHistory(null);
@@ -50,7 +52,7 @@ const Aichat = () => {
   // ✅ Delete old chat
   const deleteChatFromHistory = (id, e) => {
     e.stopPropagation();
-    setHistory(prev => prev.filter(item => item.id !== id));
+    setHistory((prev) => prev.filter((item) => item.id !== id));
     if (activeHistory === id) startNewChat();
   };
 
@@ -98,7 +100,10 @@ const Aichat = () => {
         const code = match[2];
 
         elements.push(
-          <div key={match.index} className="my-3 rounded-lg overflow-hidden shadow-md relative">
+          <div
+            key={match.index}
+            className="my-3 rounded-lg overflow-hidden shadow-md relative"
+          >
             {/* ✅ Copy Button */}
             <button
               onClick={() => navigator.clipboard.writeText(code)}
@@ -106,7 +111,12 @@ const Aichat = () => {
             >
               Copy
             </button>
-            <SyntaxHighlighter language={language} style={oneDark} showLineNumbers wrapLongLines>
+            <SyntaxHighlighter
+              language={language}
+              style={oneDark}
+              showLineNumbers
+              wrapLongLines
+            >
               {code}
             </SyntaxHighlighter>
           </div>
@@ -147,8 +157,8 @@ const Aichat = () => {
         {
           contents: tempMessages.map((msg) => ({
             role: msg.sender === "user" ? "user" : "model",
-            parts: [{ text: msg.text }]
-          }))
+            parts: [{ text: msg.text }],
+          })),
         }
       );
 
@@ -156,7 +166,11 @@ const Aichat = () => {
         response?.data?.candidates?.[0]?.content?.parts?.[0]?.text ||
         "⚠️ Sorry, I could not understand that.";
 
-      const aiMessage = { text: aiText, sender: "ai", render: renderResponse(aiText) };
+      const aiMessage = {
+        text: aiText,
+        sender: "ai",
+        render: renderResponse(aiText),
+      };
       const finalMessages = [...tempMessages, aiMessage];
 
       setMessages(finalMessages);
@@ -165,18 +179,25 @@ const Aichat = () => {
       if (!activeHistory) {
         const newHistoryItem = {
           id: Date.now(),
-          title: currentQuestion.substring(0, 30) + (currentQuestion.length > 30 ? "..." : ""),
+          title:
+            currentQuestion.substring(0, 30) +
+            (currentQuestion.length > 30 ? "..." : ""),
           messages: finalMessages,
-          timestamp: new Date().toLocaleString()
+          timestamp: new Date().toLocaleString(),
         };
-        setHistory(prev => [newHistoryItem, ...prev]);
+        setHistory((prev) => [newHistoryItem, ...prev]);
         setActiveHistory(newHistoryItem.id);
       }
     } catch (err) {
       console.error("Error:", err.response?.data || err.message);
-      setMessages(prev => [
+      setMessages((prev) => [
         ...prev,
-        { text: `❌ Error: ${err.response?.data?.error?.message || err.message}`, sender: "ai" }
+        {
+          text: `❌ Error: ${
+            err.response?.data?.error?.message || err.message
+          }`,
+          sender: "ai",
+        },
       ]);
     } finally {
       setLoading(false);
@@ -186,7 +207,9 @@ const Aichat = () => {
   };
 
   return (
-    <div className={`flex flex-col h-[100dvh] w-full ${darkMode ? "dark" : ""}`}>
+    <div
+      className={`flex flex-col h-[100dvh] w-full ${darkMode ? "dark" : ""}`}
+    >
       <Navbar
         isSidebarOpen={isSidebarOpen}
         toggleSidebar={toggleSidebar}
@@ -211,7 +234,9 @@ const Aichat = () => {
         </AnimatePresence>
 
         <div
-          className={`flex-1 flex flex-col ${isMobile ? "pt-16" : ""} transition-all duration-300 ${
+          className={`flex-1 flex flex-col ${
+            isMobile ? "pt-16" : ""
+          } transition-all duration-300 ${
             isSidebarOpen && !isMobile ? "ml-64" : ""
           }`}
         >
