@@ -52,7 +52,7 @@ const Navbar = ({
             <div className="absolute -bottom-1 -right-1 w-3 h-3 rounded-full bg-green-500 border-2 border-white dark:border-gray-800"></div>
           </div>
           <h1 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
-            Code-Mind AI
+            PAK-AI
           </h1>
         </Link>
 
