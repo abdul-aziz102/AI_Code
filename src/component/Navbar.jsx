@@ -47,7 +47,7 @@ const Navbar = ({
         <Link to="/" className="flex items-center gap-2 no-underline">
           <div className="relative">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center">
-              <span className="text-white font-bold text-lg">C</span>
+              <span className="text-white font-bold w-14 text-lg">Pak</span>
             </div>
             <div className="absolute -bottom-1 -right-1 w-3 h-3 rounded-full bg-green-500 border-2 border-white dark:border-gray-800"></div>
           </div>
